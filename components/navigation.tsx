@@ -1,40 +1,37 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import { usePathname } from "next/navigation";
+import {
+    NavigationMenu,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+} from "@/components/ui/navigation-menu";
 
 const navigationItems = [
     {
         label: "Home",
-        href: "/"
+        href: "/",
     },
     {
         label: "Search",
-        href: "/search"
-    }
+        href: "/search",
+    },
 ];
 
-function NavigationItem({ item, pathname }: { item: typeof navigationItems[0], pathname: string }) {
-    return (
-        <li key={item.href}>
-            <Link className={cn(
-                "font-medium text-sm text-zinc-600 hover:text-zinc-900",
-                pathname === item.href &&
-                "text-zinc-900 underline underline-offset-4"
-            )} href={item.href}>{item.label}</Link>
-        </li>
-    )
-}
 export default function Navigation() {
-    const pathname = usePathname()
+    const pathname = usePathname();
     return (
-        <nav>
-            <ul className="flex items-center gap-4">
+        <NavigationMenu>
+            <NavigationMenuList>
                 {navigationItems.map((item) => (
-                    <NavigationItem key={item.href} item={item} pathname={pathname} />
+                    <NavigationMenuItem key={item.href}>
+                        <NavigationMenuLink data-active={pathname === item.href} href={item.href}>
+                            {item.label}
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
                 ))}
-            </ul >
-        </nav >
-    )
+            </NavigationMenuList>
+        </NavigationMenu>
+    );
 }

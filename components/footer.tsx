@@ -1,11 +1,22 @@
-import Logo from "./logo";
+import Link from "next/link";
+import Container from "./container";
 
-export default function Footer() {
+async function getYear() {
+    "use cache";
+
+    return new Date().getFullYear();
+}
+
+export default async function Footer() {
+    const year = await getYear();
+
     return (
-        <footer className="flex justify-between items-center p-4">
-            <div className="container mx-auto max-w-7xl flex justify-start items-center gap-8">
-                <Logo />
-            </div>
+        <footer className="flex border-t border-zinc-200 justify-between items-center py-6 p-4">
+            <Container>
+                <p className="text-sm text-zinc-500">
+                    &copy; {year} <Link className="hover:underline text-black underline-offset-4" href="/">Swag Store</Link>. All rights reserved.
+                </p>
+            </Container>
         </footer>
-    )
+    );
 }

@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "next": "16.1.6",
+    "next-devtools-mcp": "^0.3.10",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",

@@ -57,7 +57,7 @@ export default function RootLayout({
       >
         <Header />
         <Banner />
-        <main>{children}</main>
+        <main className="space-y-20">{children}</main>
         <Footer />
       </body>
     </html>

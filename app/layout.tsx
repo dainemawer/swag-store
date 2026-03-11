@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Banner from "@/components/banner";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 
@@ -55,7 +56,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <Header />
-        <main className="py-20">{children}</main>
+        <Banner />
+        <main>{children}</main>
         <Footer />
       </body>
     </html>

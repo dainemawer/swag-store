@@ -6,7 +6,7 @@ import Navigation from "./navigation";
 
 export default function Header() {
     return (
-        <header className="p-4 sticky border-b border-zinc-200 top-0 z-50 bg-white">
+        <header className="sticky py-4 top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
             <Container className="flex items-center justify-between">
                 <Logo />
                 <Suspense fallback={null}>

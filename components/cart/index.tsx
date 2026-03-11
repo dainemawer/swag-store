@@ -14,7 +14,7 @@ export default function Cart() {
         <div className="relative ml-auto inline-flex items-center">
             <Popover>
                 <PopoverTrigger asChild>
-                    <Button className="relative" variant="ghost" size="lg">
+                    <Button className="relative" variant="ghost">
                         <ShoppingBag className="w-8 h-8" />
                         <span className="absolute text-xs bg-black text-white rounded-full w-4 h-4 flex items-center justify-center top-0 right-0">1</span>
                     </Button>

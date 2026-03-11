@@ -73,7 +73,7 @@ async function ProductDetail({
                 </p>
                 <Separator />
                 <div className="flex items-center gap-4">
-                    <QuantitySelector />
+                    <QuantitySelector size="default" />
                     <p className="text-xs text-zinc-500 font-medium">
                         3 items left in stock.
                     </p>

@@ -1,22 +1,16 @@
-import Container from "@/components/container";
 import Hero from "@/components/hero";
 import ProductListing from "@/components/product-listing";
+import { getProducts } from "@/lib/products";
+import { Suspense } from "react";
 
-const products = [
-  ...Array.from({ length: 10 }, (_, index) => ({
-    id: `product-${index + 1}`,
-    name: `Product ${index + 1}`,
-    price: 100 * (index + 1),
-    image: `/images/product-${index + 1}.jpg`,
-    description: `Product ${index + 1} description`,
-  })),
-];
-
-export default function Home() {
+export default async function Home() {
+  const { data: products } = await getProducts(true, 6);
   return (
     <>
       <Hero />
-      <ProductListing products={products} title="Featured Products" />
+      <Suspense fallback={null}>
+        <ProductListing products={products} title="Featured Products" />
+      </Suspense>
     </>
   );
 }

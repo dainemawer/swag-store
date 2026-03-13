@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://vercel-swag-store.vercel.app"),
   title: {
     default: "Swag Store",
     template: "%s | Swag Store",

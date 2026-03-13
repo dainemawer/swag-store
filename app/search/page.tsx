@@ -17,16 +17,6 @@ import {
     InputGroupInput,
 } from "@/components/ui/input-group";
 
-const products = [
-    ...Array.from({ length: 10 }, (_, index) => ({
-        id: `product-${index + 1}`,
-        name: `Product ${index + 1}`,
-        price: 100 * (index + 1),
-        image: `/images/product-${index + 1}.jpg`,
-        description: `Product ${index + 1} description`,
-    })),
-];
-
 export async function generateMetadata({
     searchParams,
 }: {
@@ -79,8 +69,6 @@ async function SearchResults({
                     </InputGroup>
                 </Container>
             </section>
-
-            <ProductListing products={products} title={`Search Results for: ${q ?? ""}`} />
         </>
     );
 }

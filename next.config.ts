@@ -19,6 +19,16 @@ const nextConfig: NextConfig = {
       revalidate: 60, // 1 minute
       expire: 300, // 5 minutes
     },
+    categories: {
+      stale: 3600, // 1 hour
+      revalidate: 86400, // 1 day
+      expire: 604800, // 1 week
+    },
+    search: {
+      stale: 0, // always revalidate on next visit
+      revalidate: 60, // 1 minute
+      expire: 300, // 5 minutes max
+    },
   },
   images: {
     deviceSizes: [640, 768, 1024, 1280, 1536, 1920],

@@ -36,13 +36,20 @@ export async function getProduct(slug: string) {
  * @param limit - The maximum number of products to fetch
  * @returns A promise that resolves to the products
  */
-export async function getProducts(featured?: boolean, limit?: number) {
+export async function getProducts(
+  featured?: boolean,
+  limit?: number,
+  category?: string,
+  q?: string,
+) {
   cacheLife("products");
   cacheTag("products");
 
   const params = new URLSearchParams();
   if (featured) params.set("featured", "true");
   if (limit) params.set("limit", limit.toString());
+  if (category) params.set("category", category);
+  if (q) params.set("q", q);
 
   const res = await fetch(
     `${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/products/?${params.toString()}`,

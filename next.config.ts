@@ -8,7 +8,17 @@ const nextConfig: NextConfig = {
       stale: 300, // 5 minutes
       revalidate: 900, // 15 minutes
       expire: 3600, // 1 hour
-    }
+    },
+    stock: {
+      stale: 30, // 30 seconds
+      revalidate: 60, // 1 minute
+      expire: 300, // 5 minutes
+    },
+    promotions: {
+      stale: 30, // 30 seconds
+      revalidate: 60, // 1 minute
+      expire: 300, // 5 minutes
+    },
   },
   images: {
     deviceSizes: [640, 768, 1024, 1280, 1536, 1920],
@@ -20,7 +30,7 @@ const nextConfig: NextConfig = {
         hostname: "i8qy5y6gxkdgdcv9.public.blob.vercel-storage.com",
       },
     ],
-  }
+  },
 };
 
 export default nextConfig;

@@ -1,11 +1,16 @@
+import { getPromotions } from "@/lib/promotions";
 import Container from "./container";
 
-export default function Banner() {
+export default async function Banner() {
+    const { data: promotion } = await getPromotions();
+
+    if (!promotion) return null;
+
     return (
         <div className="bg-black py-4">
             <Container>
                 <p className="text-white text-center font-medium">
-                    Bundle and Save - Buy any hoodie + hat combo and save 10% automatically. Code: <span className="font-mono uppercase">BUNDLE10</span>
+                    {promotion.title} - {promotion.description} Code: <span className="font-mono uppercase">{promotion.code}</span>
                 </p>
             </Container>
         </div>

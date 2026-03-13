@@ -1,11 +1,11 @@
 import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { blurDataURL } from "@/lib/constants";
+import { formatPrice } from "@/lib/utils";
+import type { Product } from "@/types/products";
 import Container from "./container";
 import { Button } from "./ui/button";
-import { blurDataURL } from "@/lib/placeholder";
-import { formatPrice } from "@/lib/utils";
-import { type Product } from "@/types/products";
 
 function ProductCard({ product }: { product: Product }) {
     return (
@@ -14,7 +14,7 @@ function ProductCard({ product }: { product: Product }) {
                 <Link href={`/products/${product.slug}`}>
                     <Image
                         className="hover:scale-105 transition-all duration-300"
-                        src={product.images[0] || '/images/vercel-book.jpg'}
+                        src={product.images[0] || "/images/vercel-book.jpg"}
                         alt={product.name}
                         fill
                         sizes="300px"
@@ -26,7 +26,12 @@ function ProductCard({ product }: { product: Product }) {
 
             <div className="space-y-1">
                 <h3 className="text-lg font-bold">
-                    <Link className="hover:underline underline-offset-4" href={`/products/${product.slug}`}>{product.name}</Link>
+                    <Link
+                        className="hover:underline underline-offset-4"
+                        href={`/products/${product.slug}`}
+                    >
+                        {product.name}
+                    </Link>
                 </h3>
 
                 <p className="text-sm text-zinc-500">{product.description}</p>
@@ -35,7 +40,9 @@ function ProductCard({ product }: { product: Product }) {
                         <ShoppingCart className="w-4 h-4" />
                         Add to Cart
                     </Button>
-                    <p className="text-base font-medium text-zinc-400">{formatPrice(product.price)}</p>
+                    <p className="text-base font-medium text-zinc-400">
+                        {formatPrice(product.price)}
+                    </p>
                 </div>
             </div>
         </div>

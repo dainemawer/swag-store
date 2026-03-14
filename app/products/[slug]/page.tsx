@@ -1,12 +1,10 @@
-import { ShoppingCart } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import AddToCart from "@/components/cart/add-to-cart";
 import Container from "@/components/container";
-import QuantitySelector from "@/components/product/quantity";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { blurDataURL } from "@/lib/constants";
@@ -130,16 +128,11 @@ async function ProductDetails({
                 </p>
                 <p>{product.description}</p>
                 <Separator />
-                <div className="flex items-center gap-4">
-                    <QuantitySelector size="default" />
-                    <p className="text-xs text-zinc-500 font-medium">
-                        {stock?.stock} items left in stock.
-                    </p>
-                </div>
-                <Button size="lg">
-                    <ShoppingCart className="w-4 h-4" />
-                    Add to Cart
-                </Button>
+                <AddToCart
+                    id={product.id}
+                    quantity={1}
+                    stock={stock || null}
+                />
             </div>
         </div>
     );

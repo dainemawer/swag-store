@@ -130,7 +130,6 @@ async function ProductDetails({
                 <Separator />
                 <AddToCart
                     id={product.id}
-                    quantity={1}
                     stock={stock || null}
                 />
             </div>

@@ -1,11 +1,10 @@
 "use cache";
 
 import { cacheLife, cacheTag } from "next/cache";
-import { cache } from "react";
 import type { Product } from "@/types/products";
 import { headers } from "./constants";
 
-export const getProduct = cache(async (slug: string) => {
+export async function getProduct(slug: string) {
   cacheLife("products");
   cacheTag("products", `product-${slug.toLowerCase()}`);
 
@@ -22,7 +21,7 @@ export const getProduct = cache(async (slug: string) => {
   if (!res.ok) throw new Error("Failed to fetch product");
 
   return res.json() as Promise<{ data: Product | null }>;
-});
+}
 
 export async function getProducts(
   featured?: boolean,

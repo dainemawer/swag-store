@@ -13,7 +13,7 @@ export async function searchProducts(
   cacheTag("search");
 
   const query = [
-    q && `search=${encodeURIComponent(q)}`,
+    q && `q=${encodeURIComponent(q)}`,
     category && `category=${encodeURIComponent(category)}`,
     limit && `limit=${limit}`,
   ]

@@ -2,10 +2,13 @@
 
 import { Loader2, ShoppingCart } from "lucide-react";
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
+import QuantitySelector from "@/components/product/quantity";
+import StockStatus from "@/components/product/stock";
+import { Button } from "@/components/ui/button";
+import { useCartCount } from "@/context/cart-count";
 import { addItemToCartAction } from "@/lib/actions/cart";
 import type { Stock } from "@/types/stock";
-import QuantitySelector from "../product/quantity";
-import { Button } from "../ui/button";
 
 export default function AddToCart({
     id,
@@ -18,11 +21,16 @@ export default function AddToCart({
 }) {
     const [isPending, startTransition] = useTransition();
     const [quantity, setQuantity] = useState(1);
+    const { increment } = useCartCount();
 
     const handleAddItemToCart = async (quantity: number) => {
+        increment(quantity);
         startTransition(async () => {
             await addItemToCartAction(id, quantity);
         });
+        toast.success(
+            `${quantity} ${quantity > 1 ? "items" : "item"} added to cart`,
+        );
     };
     return (
         <>
@@ -35,17 +43,13 @@ export default function AddToCart({
                         size="default"
                         disabled={isPending}
                     />
-                    <p className="text-xs text-zinc-500 font-medium">
-                        {stock?.inStock
-                            ? `${stock.stock} items left in stock.`
-                            : "Out of stock."}
-                    </p>
+                    <StockStatus stock={stock ?? null} />
                 </div>
             )}
             <Button
                 size="lg"
                 onClick={() => handleAddItemToCart(quantity)}
-                disabled={isPending}
+                disabled={isPending || (stock !== undefined && !stock?.inStock)}
             >
                 {isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

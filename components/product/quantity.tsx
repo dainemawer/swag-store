@@ -17,6 +17,12 @@ export default function QuantitySelector({ disabled, quantity, setQuantity, stoc
     const sizeClass = size === "sm" ? "size-7" : "size-10";
     const inputClass = size === "sm" ? "w-10 h-7" : "w-20 h-10";
 
+    const handleQuantityChange = (value: number) => {
+        const max = stock?.stock ?? Infinity;
+        const newValue = Math.min(Math.max(value, 1), max);
+        setQuantity(newValue);
+    };
+
     return (
         <div className="flex items-center gap-0">
             <ButtonGroup>
@@ -26,7 +32,9 @@ export default function QuantitySelector({ disabled, quantity, setQuantity, stoc
                 <Input
                     type="number"
                     value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
+                    onChange={(e) => {
+                        handleQuantityChange(Number(e.target.value));
+                    }}
                     className={cn(inputClass, "text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none")}
                 />
                 <Button className={sizeClass} variant="outline" size="icon" onClick={() => setQuantity(Math.min(quantity + 1, stock?.stock ?? Infinity))} disabled={stock !== null && quantity >= (stock?.stock ?? Infinity) || disabled}>

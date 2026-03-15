@@ -4,6 +4,8 @@ import "./globals.css";
 import Banner from "@/components/banner";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import { Toaster } from "@/components/ui/sonner";
+import { CartCountProvider } from "@/context/cart-count";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,11 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.VERCEL_URL?.startsWith("http")
-      ? process.env.VERCEL_URL
-      : `https://${process.env.VERCEL_URL}`,
-  ),
+  metadataBase: new URL(process.env.VERCEL_URL || "http://localhost:3000"),
   title: {
     default: "Swag Store",
     template: "%s | Swag Store",
@@ -60,10 +58,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
-        <Header />
-        <Banner />
-        <main className="space-y-20">{children}</main>
-        <Footer />
+        <CartCountProvider>
+          <Header />
+          <Banner />
+          <main className="space-y-20">{children}</main>
+          <Footer />
+        </CartCountProvider>
+        <Toaster />
       </body>
     </html>
   );

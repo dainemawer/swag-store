@@ -20,6 +20,7 @@ async function getOrCreateCartToken(): Promise<string> {
     httpOnly: true,
     sameSite: "lax",
     maxAge: CART_TOKEN_MAX_AGE,
+    secure: process.env.NODE_ENV === "production",
   });
 
   return data.token;

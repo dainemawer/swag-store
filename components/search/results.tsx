@@ -16,7 +16,7 @@ export default async function ProductResults({
     );
 
     if (!products?.length) {
-        return <EmptyState q={q} category={category} />;
+        return <EmptyState />;
     }
 
     return (
@@ -45,11 +45,11 @@ export function ProductResultsSkeleton() {
     );
 }
 
-function EmptyState({ q, category }: { q?: string; category?: string }) {
+function EmptyState() {
     return (
         <div className="flex flex-col items-center justify-center py-20 gap-4 text-zinc-500">
             <SearchX className="w-12 h-12" />
-            <p className="text-lg font-medium">No products found for {q} in {category}</p>
+            <p className="text-lg font-medium">No products were found for your search.</p>
         </div>
     );
 }

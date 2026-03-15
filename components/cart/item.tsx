@@ -3,8 +3,10 @@
 import { Loader2, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useOptimistic, useTransition } from "react";
+import { toast } from "sonner";
 import QuantitySelector from "@/components/product/quantity";
 import { Button } from "@/components/ui/button";
+import { useCartCount } from "@/context/cart-count";
 import {
     removeItemFromCartAction,
     updateItemQuantityAction,
@@ -13,25 +15,32 @@ import { formatPrice } from "@/lib/utils";
 import type { CartItem } from "@/types/cart";
 
 export default function CartLineItem({ item }: { item: CartItem }) {
+    const { increment, adjustSubtotal } = useCartCount();
     const [isRemoving, startRemoveTransition] = useTransition();
     const [isUpdating, startUpdateTransition] = useTransition();
     const [optimisticVisible, updateOptimisticVisible] = useOptimistic(true);
     const [optimisticQuantity, updateOptimisticQuantity] = useOptimistic(
         item.quantity,
-        (state, update: number) => update,
+        (_state, update: number) => update,
     );
 
     const handleRemoveItemFromCart = async (productId: string) => {
+        increment(-item.quantity);
+        adjustSubtotal(-(item.quantity * item.product.price));
         startRemoveTransition(async () => {
             updateOptimisticVisible(false);
             await removeItemFromCartAction(productId);
         });
+        toast.success(`${item.quantity} ${item.quantity > 1 ? "items" : "item"} removed from cart`);
     };
 
     const handleUpdateItemQuantity = async (
         productId: string,
         newQuantity: number,
     ) => {
+        const delta = newQuantity - optimisticQuantity;
+        increment(delta);
+        adjustSubtotal(delta * item.product.price);
         startUpdateTransition(async () => {
             updateOptimisticQuantity(newQuantity);
             await updateItemQuantityAction(productId, newQuantity);
@@ -60,7 +69,15 @@ export default function CartLineItem({ item }: { item: CartItem }) {
             </div>
 
             <div className="flex items-center gap-4">
-                <QuantitySelector disabled={isUpdating || isRemoving} quantity={optimisticQuantity} setQuantity={(newQuantity) => handleUpdateItemQuantity(item.productId, newQuantity)} stock={null} size="sm" />
+                <QuantitySelector
+                    disabled={isUpdating || isRemoving}
+                    quantity={optimisticQuantity}
+                    setQuantity={(newQuantity) =>
+                        handleUpdateItemQuantity(item.productId, newQuantity)
+                    }
+                    stock={null}
+                    size="sm"
+                />
                 <p className="text-sm text-black font-medium">
                     {formatPrice(item.product.price * optimisticQuantity)}
                 </p>

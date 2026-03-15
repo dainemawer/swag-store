@@ -18,6 +18,7 @@ import {
     InputGroupInput,
 } from "@/components/ui/input-group";
 import type { Category } from "@/types/categories";
+import { Skeleton } from "../ui/skeleton";
 
 export default function SearchForm({ categories }: { categories: Category[] }) {
     const [isPending, startTransition] = useTransition();
@@ -73,7 +74,7 @@ export default function SearchForm({ categories }: { categories: Category[] }) {
     };
 
     return (
-        <Form action="/search">
+        <Form id="search-form" action="/search">
             {category && (
                 <input type="hidden" name="category" value={category.slug} />
             )}
@@ -118,5 +119,13 @@ export default function SearchForm({ categories }: { categories: Category[] }) {
                 </InputGroupAddon>
             </InputGroup>
         </Form>
+    );
+}
+
+export function SearchFormSkeleton() {
+    return (
+        <div className="h-12 mb-8">
+            <Skeleton className="h-full w-full rounded-lg" />
+        </div>
     );
 }

@@ -6,9 +6,8 @@ import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types/products";
 
 export default function ProductCard({ product }: { product: Product }) {
-
     return (
-        <div className="border border-zinc-200 rounded-lg p-4 space-y-4">
+        <article className="border border-zinc-200 rounded-lg p-4 space-y-4">
             <figure className="bg-zinc-50 rounded-xl overflow-hidden">
                 <Link
                     className="aspect-square relative size-full block"
@@ -47,6 +46,6 @@ export default function ProductCard({ product }: { product: Product }) {
                     </p>
                 </div>
             </div>
-        </div>
+        </article>
     );
 }

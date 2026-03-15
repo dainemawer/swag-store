@@ -1,7 +1,6 @@
 "use server";
 
 import { refresh } from "next/cache";
-
 import {
   addItemToCart,
   removeItemFromCart,

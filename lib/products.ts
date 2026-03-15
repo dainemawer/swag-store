@@ -4,12 +4,6 @@ import { cacheLife, cacheTag } from "next/cache";
 import type { Product } from "@/types/products";
 import { headers } from "./constants";
 
-/**
- * Get a product by slug
- *
- * @param slug - The slug of the product
- * @returns A promise that resolves to the product
- */
 export async function getProduct(slug: string) {
   cacheLife("products");
   cacheTag("products", `product-${slug.toLowerCase()}`);
@@ -29,13 +23,6 @@ export async function getProduct(slug: string) {
   return res.json() as Promise<{ data: Product | null }>;
 }
 
-/**
- * Get products
- *
- * @param featured - Whether to fetch featured products
- * @param limit - The maximum number of products to fetch
- * @returns A promise that resolves to the products
- */
 export async function getProducts(
   featured?: boolean,
   limit?: number,

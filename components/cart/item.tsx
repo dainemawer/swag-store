@@ -15,6 +15,7 @@ import type { CartItem } from "@/types/cart";
 export default function CartLineItem({ item }: { item: CartItem }) {
     const [isRemoving, startRemoveTransition] = useTransition();
     const [isUpdating, startUpdateTransition] = useTransition();
+    const [optimisticVisible, updateOptimisticVisible] = useOptimistic(true);
     const [optimisticQuantity, updateOptimisticQuantity] = useOptimistic(
         item.quantity,
         (state, update: number) => update,
@@ -22,6 +23,7 @@ export default function CartLineItem({ item }: { item: CartItem }) {
 
     const handleRemoveItemFromCart = async (productId: string) => {
         startRemoveTransition(async () => {
+            updateOptimisticVisible(false);
             await removeItemFromCartAction(productId);
         });
     };
@@ -35,6 +37,8 @@ export default function CartLineItem({ item }: { item: CartItem }) {
             await updateItemQuantityAction(productId, newQuantity);
         });
     };
+
+    if (!optimisticVisible) return null;
 
     return (
         <div className="flex items-center justify-between py-2 gap-2">
@@ -58,7 +62,7 @@ export default function CartLineItem({ item }: { item: CartItem }) {
             <div className="flex items-center gap-4">
                 <QuantitySelector disabled={isUpdating || isRemoving} quantity={optimisticQuantity} setQuantity={(newQuantity) => handleUpdateItemQuantity(item.productId, newQuantity)} stock={null} size="sm" />
                 <p className="text-sm text-black font-medium">
-                    {formatPrice(item.lineTotal)}
+                    {formatPrice(item.product.price * optimisticQuantity)}
                 </p>
                 <Button
                     variant="ghost"

@@ -51,17 +51,16 @@ export default async function ProductPage({
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
-    const [{ data: product }, { data: stock }] = await Promise.all([
-        getProduct(slug),
-        getProductStock(slug),
-    ]);
+    const { data: product } = await getProduct(slug);
 
     if (!product) notFound();
+
+    const promisedStock = getProductStock(slug);
 
     return (
         <Container>
             <Suspense fallback={<ProductDetailsSkeleton />}>
-                <ProductDetails product={product} stock={stock} />
+                <ProductDetails product={product} promisedStock={promisedStock} />
             </Suspense>
         </Container>
     );
@@ -98,11 +97,12 @@ function ProductDetailsSkeleton() {
 
 async function ProductDetails({
     product,
-    stock,
+    promisedStock,
 }: {
     product: Product;
-    stock: Stock | null;
+    promisedStock: Promise<{ data: Stock | null }>;
 }) {
+    const { data: stock } = await promisedStock;
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-20">
             <div>
@@ -113,6 +113,7 @@ async function ProductDetails({
                         blurDataURL={blurDataURL}
                         alt={product.name}
                         fill
+                        preload
                         sizes="500px"
                         placeholder="blur"
                     />

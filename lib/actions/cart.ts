@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
+
 import {
   addItemToCart,
   removeItemFromCart,
@@ -9,13 +10,13 @@ import {
 
 export async function addItemToCartAction(productId: string, quantity: number) {
   const { data } = await addItemToCart(productId, quantity);
-  revalidatePath("/", "layout");
+  refresh();
   return data;
 }
 
 export async function removeItemFromCartAction(productId: string) {
   const { data } = await removeItemFromCart(productId);
-  revalidatePath("/", "layout");
+  refresh();
   return data;
 }
 
@@ -24,6 +25,6 @@ export async function updateItemQuantityAction(
   quantity: number,
 ) {
   const { data } = await updateItemQuantity(productId, quantity);
-  revalidatePath("/", "layout");
+  refresh();
   return data;
 }

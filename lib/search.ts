@@ -13,8 +13,8 @@ export async function searchProducts(
   cacheTag("search");
 
   const query = [
-    q && `search=${q}`,
-    category && `category=${category}`,
+    q && `search=${encodeURIComponent(q)}`,
+    category && `category=${encodeURIComponent(category)}`,
     limit && `limit=${limit}`,
   ]
     .filter(Boolean)

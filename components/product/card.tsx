@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import AddToCart from "@/components/cart/add-to-cart";
@@ -8,7 +6,6 @@ import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types/products";
 
 export default function ProductCard({ product }: { product: Product }) {
-
 
     return (
         <div className="border border-zinc-200 rounded-lg p-4 space-y-4">

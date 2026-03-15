@@ -36,7 +36,7 @@ export default function AddToCart({
                         disabled={isPending}
                     />
                     <p className="text-xs text-zinc-500 font-medium">
-                        {stock?.stock
+                        {stock?.inStock
                             ? `${stock.stock} items left in stock.`
                             : "Out of stock."}
                     </p>

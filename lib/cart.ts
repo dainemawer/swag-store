@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import type { Cart } from "@/types/cart";
-import { headers } from "./constants";
+import { CART_TOKEN_MAX_AGE, headers } from "./constants";
 
 async function getOrCreateCartToken(): Promise<string> {
   const cookieStore = await cookies();
@@ -19,7 +19,7 @@ async function getOrCreateCartToken(): Promise<string> {
   cookieStore.set("cart-token", data.token, {
     httpOnly: true,
     sameSite: "lax",
-    maxAge: 3 * 60 * 60,
+    maxAge: CART_TOKEN_MAX_AGE,
   });
 
   return data.token;

@@ -2,7 +2,7 @@ import type { Product } from "@/types/products";
 import Container from "./container";
 import ProductCard from "./product/card";
 
-export default async function ProductListing({
+export default function ProductListing({
     products = [],
     title,
 }: {

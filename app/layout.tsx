@@ -18,7 +18,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.VERCEL_URL || "http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.VERCEL_URL
+      ? process.env.VERCEL_URL.startsWith("http")
+        ? process.env.VERCEL_URL
+        : `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000",
+  ),
   title: {
     default: "Swag Store",
     template: "%s | Swag Store",

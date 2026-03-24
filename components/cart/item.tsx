@@ -44,13 +44,16 @@ export default function CartLineItem({ item }: { item: CartItem }) {
         startUpdateTransition(async () => {
             updateOptimisticQuantity(newQuantity);
             await updateItemQuantityAction(productId, newQuantity);
+            toast.success("Cart item updated successfully");
         });
     };
 
     if (!optimisticVisible) return null;
 
+    const isPending = isRemoving || isUpdating;
+
     return (
-        <div className="flex items-center justify-between py-2 gap-2">
+        <div className={`relative flex items-center justify-between py-2 gap-2 transition-opacity duration-200 ${isPending ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
             <div className="flex items-center gap-2">
                 <figure className="aspect-square relative size-14 bg-zinc-50 overflow-hidden">
                     <Image

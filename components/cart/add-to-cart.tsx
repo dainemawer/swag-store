@@ -26,11 +26,16 @@ export default function AddToCart({
     const handleAddItemToCart = async (quantity: number) => {
         increment(quantity);
         startTransition(async () => {
-            await addItemToCartAction(id, quantity);
+            try {
+                await addItemToCartAction(id, quantity);
+                toast.success(
+                    `${quantity} ${quantity > 1 ? "items" : "item"} added to cart`,
+                );
+            } catch {
+                increment(-quantity);
+                toast.error("Failed to add item to cart. Please try again.");
+            }
         });
-        toast.success(
-            `${quantity} ${quantity > 1 ? "items" : "item"} added to cart`,
-        );
     };
     return (
         <>

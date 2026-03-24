@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 
 interface CartCountContextValue {
     count: number;
@@ -24,14 +24,17 @@ export function CartCountProvider({ children }: { children: React.ReactNode }) {
     const [count, setCount] = useState(0);
     const [subtotal, setSubtotal] = useState(0);
 
+    const increment = useCallback((n: number) => setCount((c) => c + n), []);
+    const adjustSubtotal = useCallback((delta: number) => setSubtotal((s) => s + delta), []);
+
     return (
         <CartCountContext.Provider
             value={{
                 count,
-                increment: (n) => setCount((c) => c + n),
+                increment,
                 setCount,
                 subtotal,
-                adjustSubtotal: (delta) => setSubtotal((s) => s + delta),
+                adjustSubtotal,
                 setSubtotal,
             }}
         >

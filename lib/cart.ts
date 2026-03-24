@@ -2,11 +2,7 @@ import { cookies } from "next/headers";
 import type { Cart } from "@/types/cart";
 import { CART_TOKEN_MAX_AGE, headers } from "./constants";
 
-async function getOrCreateCartToken(): Promise<string> {
-  const cookieStore = await cookies();
-  const existing = cookieStore.get("cart-token")?.value;
-  if (existing) return existing;
-
+async function createCartToken(cookieStore: Awaited<ReturnType<typeof cookies>>): Promise<string> {
   const res = await fetch(
     `${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/cart/create`,
     { method: "POST", headers: { ...headers } },
@@ -24,6 +20,24 @@ async function getOrCreateCartToken(): Promise<string> {
   });
 
   return data.token;
+}
+
+async function getOrCreateCartToken(): Promise<string> {
+  const cookieStore = await cookies();
+  const existing = cookieStore.get("cart-token")?.value;
+
+  if (existing) {
+    const check = await fetch(`${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/cart`, {
+      headers: { ...headers, "x-cart-token": existing },
+    });
+
+    if (check.ok) return existing;
+
+    // Token is stale — create a fresh cart and overwrite the cookie
+    return createCartToken(cookieStore);
+  }
+
+  return createCartToken(cookieStore);
 }
 
 export async function getCart() {
@@ -54,7 +68,19 @@ export async function getCart() {
     },
   );
 
-  if (!res.ok) throw new Error("Failed to get cart");
+  if (!res.ok) {
+    return {
+      data: {
+        token: "",
+        items: [],
+        totalItems: 0,
+        subtotal: 0,
+        currency: "USD",
+        createdAt: "",
+        updatedAt: "",
+      } satisfies Cart,
+    };
+  }
 
   return res.json() as Promise<{ data: Cart }>;
 }

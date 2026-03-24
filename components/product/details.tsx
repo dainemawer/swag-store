@@ -42,7 +42,7 @@ export default async function ProductDetails({
                 </p>
                 <p>{product.description}</p>
                 <Separator />
-                <AddToCart id={product.id} stock={stock || null} />
+                <AddToCart id={product.id} stock={stock} />
             </div>
         </div>
     );

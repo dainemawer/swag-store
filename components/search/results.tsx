@@ -10,21 +10,23 @@ export default async function ProductResults({
 }) {
     const { q, category } = await searchParams;
     const { data: products } = await searchProducts(
-        q ?? "",
+        q,
         category,
         q || category ? 5 : undefined,
     );
 
-    if (!products?.length) {
+    if (!products.length) {
         return <EmptyState />;
     }
 
-    return (
-        <ProductListing
-            products={products}
-            title={q ? `Results for "${q}"` : "All Products"}
-        />
-    );
+    const title =
+        q && category
+            ? `Results for "${q}" · ${category}`
+            : q
+              ? `Results for "${q}"`
+              : "All Products";
+
+    return <ProductListing products={products} title={title} />;
 }
 
 export function ProductResultsSkeleton() {

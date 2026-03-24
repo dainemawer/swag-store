@@ -10,11 +10,7 @@ export async function getProduct(slug: string) {
 
   const res = await fetch(
     `${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/products/${slug}`,
-    {
-      headers: {
-        ...headers,
-      },
-    },
+    { headers },
   );
 
   if (res.status === 404) return { data: null };
@@ -40,11 +36,7 @@ export async function getProducts(
 
   const res = await fetch(
     `${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/products/?${params.toString()}`,
-    {
-      headers: {
-        ...headers,
-      },
-    },
+    { headers },
   );
 
   if (!res.ok) throw new Error("Failed to fetch products");

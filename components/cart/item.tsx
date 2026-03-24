@@ -30,8 +30,10 @@ export default function CartLineItem({ item }: { item: CartItem }) {
         startRemoveTransition(async () => {
             updateOptimisticVisible(false);
             await removeItemFromCartAction(productId);
+            toast.success(
+                `${item.quantity} ${item.quantity > 1 ? "items" : "item"} removed from cart`,
+            );
         });
-        toast.success(`${item.quantity} ${item.quantity > 1 ? "items" : "item"} removed from cart`);
     };
 
     const handleUpdateItemQuantity = async (
@@ -73,7 +75,7 @@ export default function CartLineItem({ item }: { item: CartItem }) {
 
             <div className="flex items-center gap-4">
                 <QuantitySelector
-                    disabled={isUpdating || isRemoving}
+                    disabled={isPending}
                     quantity={optimisticQuantity}
                     setQuantity={(newQuantity) =>
                         handleUpdateItemQuantity(item.productId, newQuantity)
@@ -88,7 +90,7 @@ export default function CartLineItem({ item }: { item: CartItem }) {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleRemoveItemFromCart(item.productId)}
-                    disabled={isRemoving || isUpdating}
+                    disabled={isPending}
                 >
                     {isRemoving ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

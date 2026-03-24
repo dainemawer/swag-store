@@ -24,9 +24,16 @@ export default function QuantitySelector({ disabled, quantity, setQuantity, stoc
     };
 
     return (
-        <div className="flex items-center gap-0">
+        <div className="flex items-center">
             <ButtonGroup>
-                <Button className={sizeClass} variant="outline" size="icon" onClick={() => setQuantity(Math.max(quantity - 1, 1))} disabled={quantity <= 1 || disabled}>
+                <Button
+                    className={sizeClass}
+                    variant="outline"
+                    size="icon"
+                    type="button"
+                    onClick={() => handleQuantityChange(quantity - 1)}
+                    disabled={quantity <= 1 || disabled}
+                >
                     <MinusIcon />
                 </Button>
                 <Input
@@ -37,7 +44,17 @@ export default function QuantitySelector({ disabled, quantity, setQuantity, stoc
                     }}
                     className={cn(inputClass, "text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none")}
                 />
-                <Button className={sizeClass} variant="outline" size="icon" onClick={() => setQuantity(Math.min(quantity + 1, stock?.stock ?? Infinity))} disabled={stock !== null && quantity >= (stock?.stock ?? Infinity) || disabled}>
+                <Button
+                    className={sizeClass}
+                    variant="outline"
+                    size="icon"
+                    type="button"
+                    onClick={() => handleQuantityChange(quantity + 1)}
+                    disabled={
+                        disabled ||
+                        (stock !== null && quantity >= stock.stock)
+                    }
+                >
                     <PlusIcon />
                 </Button>
             </ButtonGroup>

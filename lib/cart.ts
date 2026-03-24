@@ -2,6 +2,16 @@ import { cookies } from "next/headers";
 import type { Cart } from "@/types/cart";
 import { CART_TOKEN_MAX_AGE, headers } from "./constants";
 
+const EMPTY_CART_RESPONSE: Cart = {
+  token: "",
+  items: [],
+  totalItems: 0,
+  subtotal: 0,
+  currency: "USD",
+  createdAt: "",
+  updatedAt: "",
+} satisfies Cart;
+
 async function createCartToken(cookieStore: Awaited<ReturnType<typeof cookies>>): Promise<string> {
   const res = await fetch(
     `${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/cart/create`,
@@ -25,18 +35,10 @@ async function createCartToken(cookieStore: Awaited<ReturnType<typeof cookies>>)
 async function getOrCreateCartToken(): Promise<string> {
   const cookieStore = await cookies();
   const existing = cookieStore.get("cart-token")?.value;
-
-  if (existing) {
-    const check = await fetch(`${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/cart`, {
-      headers: { ...headers, "x-cart-token": existing },
-    });
-
-    if (check.ok) return existing;
-
-    // Token is stale — create a fresh cart and overwrite the cookie
-    return createCartToken(cookieStore);
-  }
-
+  // Trust the cookie; if the token is rejected by a mutation endpoint the
+  // caller will throw anyway. Re-validating here on every action doubles
+  // API calls unnecessarily.
+  if (existing) return existing;
   return createCartToken(cookieStore);
 }
 
@@ -46,15 +48,7 @@ export async function getCart() {
 
   if (!token) {
     return {
-      data: {
-        token: "",
-        items: [],
-        totalItems: 0,
-        subtotal: 0,
-        currency: "USD",
-        createdAt: "",
-        updatedAt: "",
-      } satisfies Cart,
+      data: EMPTY_CART_RESPONSE,
     };
   }
 
@@ -70,15 +64,7 @@ export async function getCart() {
 
   if (!res.ok) {
     return {
-      data: {
-        token: "",
-        items: [],
-        totalItems: 0,
-        subtotal: 0,
-        currency: "USD",
-        createdAt: "",
-        updatedAt: "",
-      } satisfies Cart,
+      data: EMPTY_CART_RESPONSE,
     };
   }
 

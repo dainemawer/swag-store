@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import Banner from "@/components/banner";
 import Footer from "@/components/footer";
@@ -17,14 +18,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.VERCEL_URL
+  ? process.env.VERCEL_URL.startsWith("http")
+    ? process.env.VERCEL_URL
+    : `https://${process.env.VERCEL_URL}`
+  : "http://localhost:3000";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.VERCEL_URL
-      ? process.env.VERCEL_URL.startsWith("http")
-        ? process.env.VERCEL_URL
-        : `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000",
-  ),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Swag Store",
     template: "%s | Swag Store",
@@ -41,6 +42,14 @@ export const metadata: Metadata = {
     title: "Swag Store",
     description:
       "Shop the latest branded merchandise, apparel, and accessories at Swag Store.",
+    images: [
+      {
+        url: `${siteUrl}/opengraph-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Swag Store",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -66,7 +75,9 @@ export default function RootLayout({
       >
         <CartCountProvider>
           <Header />
-          <Banner />
+          <Suspense fallback={null}>
+            <Banner />
+          </Suspense>
           <main className="space-y-20">{children}</main>
           <Footer />
         </CartCountProvider>

@@ -11,58 +11,61 @@ import { addItemToCartAction } from "@/lib/actions/cart";
 import type { Stock } from "@/types/stock";
 
 export default function AddToCart({
-    id,
-    showQuantitySelector = true,
-    stock,
+  id,
+  showQuantitySelector = true,
+  stock,
 }: {
-    id: string;
-    showQuantitySelector?: boolean;
-    stock?: Stock | null;
+  id: string;
+  showQuantitySelector?: boolean;
+  stock?: Stock | null;
 }) {
-    const [isPending, startTransition] = useTransition();
-    const [quantity, setQuantity] = useState(1);
-    const { increment } = useCartCount();
+  const [isPending, startTransition] = useTransition();
+  const [quantity, setQuantity] = useState(1);
+  const { increment } = useCartCount();
 
-    const handleAddItemToCart = async (quantity: number) => {
-        increment(quantity);
-        startTransition(async () => {
-            try {
-                await addItemToCartAction(id, quantity);
-                toast.success(
-                    `${quantity} ${quantity > 1 ? "items" : "item"} added to cart`,
-                );
-            } catch {
-                increment(-quantity);
-                toast.error("Failed to add item to cart. Please try again.");
-            }
-        });
-    };
-    return (
-        <>
-            {showQuantitySelector && (
-                <div className="flex items-center gap-4">
-                    <QuantitySelector
-                        quantity={quantity}
-                        setQuantity={setQuantity}
-                        stock={stock ?? null}
-                        size="default"
-                        disabled={isPending}
-                    />
-                    <StockStatus stock={stock ?? null} />
-                </div>
-            )}
-            <Button
-                size="lg"
-                onClick={() => handleAddItemToCart(quantity)}
-                disabled={isPending || (stock !== undefined && !stock?.inStock)}
-            >
-                {isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                    <ShoppingCart className="w-4 h-4" />
-                )}
-                Add to Cart
-            </Button>
-        </>
-    );
+  const handleAddItemToCart = async (quantity: number) => {
+    increment(quantity);
+    startTransition(async () => {
+      try {
+        await addItemToCartAction(id, quantity);
+        toast.success(
+          `${quantity} ${quantity > 1 ? "items" : "item"} added to cart`,
+        );
+      } catch {
+        increment(-quantity);
+        toast.error("Failed to add item to cart. Please try again.");
+      }
+    });
+  };
+  return (
+    <>
+      {showQuantitySelector && (
+        <div className="flex items-center gap-4">
+          <QuantitySelector
+            quantity={quantity}
+            setQuantity={setQuantity}
+            stock={stock ?? null}
+            size="default"
+            disabled={isPending}
+          />
+          <StockStatus stock={stock ?? null} />
+        </div>
+      )}
+      <Button
+        size="lg"
+        onClick={() => handleAddItemToCart(quantity)}
+        disabled={
+          isPending ||
+          (stock !== undefined && stock !== null && !stock.inStock)
+        }
+      >
+        {isPending ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : (
+          <ShoppingCart className="w-4 h-4" />
+        )}
+        Add to Cart
+      </Button>
+    </>
+  );
 }

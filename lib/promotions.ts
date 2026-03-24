@@ -10,11 +10,7 @@ export async function getPromotions() {
 
   const res = await fetch(
     `${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/promotions`,
-    {
-      headers: {
-        ...headers,
-      },
-    },
+    { headers },
   );
 
   if (res.status === 404) return { data: null };

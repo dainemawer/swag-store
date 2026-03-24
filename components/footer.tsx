@@ -1,9 +1,10 @@
+import { cacheLife } from "next/cache";
 import Link from "next/link";
 import Container from "./container";
 
 async function getYear() {
     "use cache";
-
+    cacheLife("categories");
     return new Date().getFullYear();
 }
 

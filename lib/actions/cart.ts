@@ -9,13 +9,13 @@ import {
 
 export async function addItemToCartAction(productId: string, quantity: number) {
   const { data } = await addItemToCart(productId, quantity);
-  refresh();
+  await refresh();
   return data;
 }
 
 export async function removeItemFromCartAction(productId: string) {
   const { data } = await removeItemFromCart(productId);
-  refresh();
+  await refresh();
   return data;
 }
 
@@ -24,6 +24,6 @@ export async function updateItemQuantityAction(
   quantity: number,
 ) {
   const { data } = await updateItemQuantity(productId, quantity);
-  refresh();
+  await refresh();
   return data;
 }

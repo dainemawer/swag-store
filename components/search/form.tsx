@@ -20,19 +20,46 @@ import {
 import type { Category } from "@/types/categories";
 import { Skeleton } from "../ui/skeleton";
 
-export default function SearchForm({ categories }: { categories: Category[] }) {
+function categoryFromSlug(
+    slug: string | null | undefined,
+    categories: Category[],
+): Category | null {
+    if (!slug) return null;
+    return categories.find((c) => c.slug === slug) ?? null;
+}
+
+export default function SearchForm({
+    categories,
+    initialQ = "",
+    initialCategorySlug = null,
+}: {
+    categories: Category[];
+    initialQ?: string;
+    initialCategorySlug?: string | null;
+}) {
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
-    const [category, setCategory] = useState<Category | null>(
-        () => categories.find((c) => c.slug === searchParams.get("category")) ?? null
+    const [search, setSearch] = useState(initialQ);
+    const [category, setCategory] = useState<Category | null>(() =>
+        categoryFromSlug(initialCategorySlug, categories),
     );
     const searchParamsRef = useRef(searchParams);
+    const categoriesRef = useRef(categories);
+    categoriesRef.current = categories;
 
     useEffect(() => {
         searchParamsRef.current = searchParams;
     }, [searchParams]);
+
+    const paramsSignature = searchParams.toString();
+    useEffect(() => {
+        const next = new URLSearchParams(paramsSignature);
+        const q = next.get("q") ?? "";
+        const slug = next.get("category");
+        setSearch(q);
+        setCategory(categoryFromSlug(slug, categoriesRef.current));
+    }, [paramsSignature]);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -83,7 +110,7 @@ export default function SearchForm({ categories }: { categories: Category[] }) {
                     className="bg-white"
                     name="q"
                     placeholder="Enter search query"
-                    value={search || ""}
+                    value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
                 <InputGroupAddon align="inline-end">

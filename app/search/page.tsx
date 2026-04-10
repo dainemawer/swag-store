@@ -31,7 +31,10 @@ export default async function SearchPage({
             <Container>
                 <h1 className="text-4xl font-bold mb-8">Product Search</h1>
                 <Suspense fallback={<SearchFormSkeleton />}>
-                    <SearchFormWrapper promisedCategories={promisedCategories} />
+                    <SearchFormWrapper
+                        promisedCategories={promisedCategories}
+                        promisedSearchParams={searchParams}
+                    />
                 </Suspense>
                 <Suspense fallback={<ProductResultsSkeleton />}>
                     <ProductResults searchParams={searchParams} />

@@ -3,19 +3,20 @@ import type { Category } from "@/types/categories";
 
 export default async function SearchFormWrapper({
     promisedCategories,
-    initialQ = "",
-    initialCategorySlug = null,
+    promisedSearchParams,
 }: {
     promisedCategories: Promise<{ data: Category[] | null }>;
-    initialQ?: string;
-    initialCategorySlug?: string | null;
+    promisedSearchParams: Promise<{ q?: string; category?: string }>;
 }) {
-    const { data: categories } = await promisedCategories;
+    const [{ data: categories }, { q, category }] = await Promise.all([
+        promisedCategories,
+        promisedSearchParams,
+    ]);
     return (
         <SearchForm
             categories={categories ?? []}
-            initialQ={initialQ}
-            initialCategorySlug={initialCategorySlug}
+            initialQ={q ?? ""}
+            initialCategorySlug={category ?? null}
         />
     );
 }

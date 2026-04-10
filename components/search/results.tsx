@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { SearchX } from "lucide-react";
 import ProductListing from "@/components/product-listing";
 import { searchProducts } from "@/lib/search";
@@ -8,6 +9,7 @@ export default async function ProductResults({
 }: {
     searchParams: Promise<{ q?: string; category?: string }>;
 }) {
+    await connection();
     const { q, category } = await searchParams;
     const { data: products } = await searchProducts(
         q,

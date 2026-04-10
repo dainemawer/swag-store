@@ -35,10 +35,12 @@ async function createCartToken(cookieStore: Awaited<ReturnType<typeof cookies>>)
 async function getOrCreateCartToken(): Promise<string> {
   const cookieStore = await cookies();
   const existing = cookieStore.get("cart-token")?.value;
-  // Trust the cookie; if the token is rejected by a mutation endpoint the
-  // caller will throw anyway. Re-validating here on every action doubles
-  // API calls unnecessarily.
   if (existing) return existing;
+  return createCartToken(cookieStore);
+}
+
+async function renewCartToken(): Promise<string> {
+  const cookieStore = await cookies();
   return createCartToken(cookieStore);
 }
 
@@ -72,62 +74,92 @@ export async function getCart() {
 }
 
 export async function addItemToCart(productId: string, quantity: number) {
-  const token = await getOrCreateCartToken();
+  let token = await getOrCreateCartToken();
 
-  const res = await fetch(
-    `${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/cart`,
-    {
+  const doFetch = (t: string) =>
+    fetch(`${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/cart`, {
       method: "POST",
       headers: {
         ...headers,
         "Content-Type": "application/json",
-        "x-cart-token": token,
+        "x-cart-token": t,
       },
-      body: JSON.stringify({ productId, quantity: quantity }),
-    },
-  );
+      body: JSON.stringify({ productId, quantity }),
+    });
 
-  if (!res.ok) throw new Error("Failed to add item to cart");
+  let res = await doFetch(token);
+
+  if (res.status === 404) {
+    token = await renewCartToken();
+    res = await doFetch(token);
+  }
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "(unreadable)");
+    throw new Error(
+      `Failed to add item to cart — status ${res.status}: ${body}`,
+    );
+  }
 
   return res.json() as Promise<{ data: Cart }>;
 }
 
 export async function removeItemFromCart(productId: string) {
-  const token = await getOrCreateCartToken();
+  let token = await getOrCreateCartToken();
 
-  const res = await fetch(
-    `${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/cart/${productId}`,
-    {
+  const doFetch = (t: string) =>
+    fetch(`${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/cart/${productId}`, {
       method: "DELETE",
       headers: {
         ...headers,
-        "x-cart-token": token,
+        "x-cart-token": t,
       },
-    },
-  );
+    });
 
-  if (!res.ok) throw new Error("Failed to remove item from cart");
+  let res = await doFetch(token);
+
+  if (res.status === 404) {
+    token = await renewCartToken();
+    res = await doFetch(token);
+  }
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "(unreadable)");
+    throw new Error(
+      `Failed to remove item from cart — status ${res.status}: ${body}`,
+    );
+  }
 
   return res.json() as Promise<{ data: Cart }>;
 }
 
 export async function updateItemQuantity(productId: string, quantity: number) {
-  const token = await getOrCreateCartToken();
+  let token = await getOrCreateCartToken();
 
-  const res = await fetch(
-    `${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/cart/${productId}`,
-    {
+  const doFetch = (t: string) =>
+    fetch(`${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/cart/${productId}`, {
       method: "PATCH",
       headers: {
         ...headers,
         "Content-Type": "application/json",
-        "x-cart-token": token,
+        "x-cart-token": t,
       },
-      body: JSON.stringify({ quantity: quantity }),
-    },
-  );
+      body: JSON.stringify({ quantity }),
+    });
 
-  if (!res.ok) throw new Error("Failed to update item quantity");
+  let res = await doFetch(token);
+
+  if (res.status === 404) {
+    token = await renewCartToken();
+    res = await doFetch(token);
+  }
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "(unreadable)");
+    throw new Error(
+      `Failed to update item quantity — status ${res.status}: ${body}`,
+    );
+  }
 
   return res.json() as Promise<{ data: Cart }>;
 }

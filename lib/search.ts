@@ -1,29 +1,21 @@
-"use cache";
-
 import { cacheLife, cacheTag } from "next/cache";
 import type { Product } from "@/types/products";
 import { headers } from "./constants";
 
-async function fetchProductList(
-  q?: string,
-  category?: string,
-  limit?: number,
-): Promise<Product[]> {
-  const query = [
-    q && `q=${encodeURIComponent(q)}`,
-    category && `category=${encodeURIComponent(category)}`,
-    limit && `limit=${limit}`,
-  ]
-    .filter(Boolean)
-    .join("&");
+// The API only supports filtering by category. The `q` param is silently
+// ignored, so text search is implemented client-side after fetching.
+async function fetchByCategory(category?: string): Promise<Product[]> {
+  const query = category
+    ? `?category=${encodeURIComponent(category)}`
+    : "";
 
   const res = await fetch(
-    `${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/products/?${query}`,
+    `${process.env.VERCEL_SWAG_STORE_API_ENDPOINT}/products/${query}`,
     { headers },
   );
 
   if (res.status === 404) return [];
-  if (!res.ok) throw new Error("Failed to search products");
+  if (!res.ok) throw new Error("Failed to fetch products");
 
   const { data } = (await res.json()) as { data: Product[] };
   return data ?? [];
@@ -34,43 +26,34 @@ export async function searchProducts(
   category?: string,
   limit?: number,
 ) {
+  "use cache";
   cacheLife("search");
   cacheTag("search");
 
-  const qTrimmed = q?.trim();
-  const hasQ = Boolean(qTrimmed);
-  const hasCategory = Boolean(category);
+  const qTrimmed = q?.trim().toLowerCase();
 
   if (qTrimmed) {
-    cacheTag("search", `search:q:${qTrimmed.toLowerCase()}`);
+    cacheTag(`search:q:${qTrimmed}`);
   }
   if (category) {
-    cacheTag("search", `search:cat:${category.toLowerCase()}`);
+    cacheTag(`search:cat:${category.toLowerCase()}`);
   }
-  if (qTrimmed && category) {
-    cacheTag(
-      "search",
-      `search:q:${qTrimmed.toLowerCase()}:cat:${category.toLowerCase()}`,
+
+  // Fetch products filtered by category (the only server-side filter the API supports).
+  let products = await fetchByCategory(category);
+
+  // Apply text search client-side against name and description.
+  if (qTrimmed) {
+    products = products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(qTrimmed) ||
+        (p.description ?? "").toLowerCase().includes(qTrimmed),
     );
   }
 
-  // API appears to treat combined q+category as category-only. AND semantics: intersect
-  // text matches with category listing.
-  if (hasQ && hasCategory) {
-    const [byQuery, byCategory] = await Promise.all([
-      fetchProductList(qTrimmed, undefined, undefined),
-      fetchProductList(undefined, category, undefined),
-    ]);
-    const categoryIds = new Set(byCategory.map((p) => p.id));
-    let data = byQuery.filter((p) => categoryIds.has(p.id));
-    if (limit) data = data.slice(0, limit);
-    return { data };
+  if (limit) {
+    products = products.slice(0, limit);
   }
 
-  const data = await fetchProductList(
-    hasQ ? qTrimmed : undefined,
-    hasCategory ? category : undefined,
-    limit,
-  );
-  return { data };
+  return { data: products };
 }
